@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SettingsAppBar extends AppBar {
   SettingsAppBar({super.key});
@@ -18,8 +19,16 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    IconButton backButton = IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        color: const Color(0xFF619267),
+        onPressed: () => Navigator.of(context).pop(),
+        alignment: const Alignment(-1.0, -1.0));
+
     var height = MediaQuery.of(context).size.height;
     return AppBar(
+      automaticallyImplyLeading: false,
+      flexibleSpace: backButton,
       title: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
