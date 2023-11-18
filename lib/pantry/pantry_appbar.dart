@@ -30,11 +30,7 @@ class _PantryBarState extends State<PantryAppBar> {
           Navigator.push(
               context,
               MaterialPageRoute<Scaffold>(
-                  builder: (context) => Scaffold(
-                      appBar: PreferredSize(
-                          preferredSize: Size.fromHeight(height / 6),
-                          child: SettingsAppBar()),
-                      body: const Settings())));
+                  builder: (context) => const Settings()));
         });
 
     return AppBar(
