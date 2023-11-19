@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:waste_protector/settings/settings.dart';
-import 'package:waste_protector/settings/settings_appbar.dart';
 
 class PantryAppBar extends AppBar {
   PantryAppBar({super.key});

@@ -65,8 +65,14 @@ class _WasteProtectorState extends State<WasteProtector> {
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
-                textTheme:
-                    Theme.of(context).textTheme.apply(fontFamily: 'Fredoka')),
+                //textSelectionTheme: const TextSelectionThemeData(
+                //selectionColor: Color(0xFF619267)),
+                textTheme: Theme.of(context).textTheme.apply(
+                      fontFamily: 'Fredoka',
+                      bodyColor: Color(0xFF353535),
+                      displayColor: Color(0xFF353535),
+                      decorationColor: Color(0xFF353535),
+                    )),
             home: WillPopScope(
               onWillPop: () async {
                 final isFirstRouteInCurrentPage =
