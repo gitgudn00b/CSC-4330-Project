@@ -1,63 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:waste_protector/waste_protector_navigator.dart';
 
 class WasteProtector extends StatefulWidget {
   const WasteProtector({super.key});
 
-  @override
-  State<WasteProtector> createState() => _WasteProtectorState();
-}
+  static int currentPageIndex = 0;
 
-class _WasteProtectorState extends State<WasteProtector> {
-  int currentPageIndex = 0;
-
-  String _currentPage = "Pantry";
-
-  List<String> pageKeys = ["Pantry", "Cookbook", "Add Food", "Recipe"];
-
-  final Map<String, GlobalKey<NavigatorState>> _navigatorKeys = {
+  static final Map<String, GlobalKey<NavigatorState>> navigatorKeys = {
     "Pantry": GlobalKey<NavigatorState>(),
     "Cookbook": GlobalKey<NavigatorState>(),
     "Add Food": GlobalKey<NavigatorState>(),
     "Recipe": GlobalKey<NavigatorState>(),
   };
 
-  /* static List<AppBar> appBars = [
-    PantryAppBar(),
-    CookbookAppBar(),
-    AddFoodAppBar(),
-    RecipeAppBar(),
-    SettingsAppBar()
-  ];
+  @override
+  State<WasteProtector> createState() => _WasteProtectorState();
+}
 
-  static List<Widget> containers = [
-    const Pantry(),
-    const Cookbook(),
-    AddFood(),
-    const Recipe(),
-    const Settings()
-  ]; */
+class _WasteProtectorState extends State<WasteProtector> {
+  static String _currentPage = "Pantry";
+
+  List<String> pageKeys = ["Pantry", "Cookbook", "Add Food", "Recipe"];
 
   void _selectPage(String pageItem, int index) {
     if (pageItem == _currentPage) {
-      _navigatorKeys[pageItem]!
-          .currentState!
+      WasteProtector.navigatorKeys[pageItem]!.currentState!
           .popUntil((route) => route.isFirst);
     } else {
       setState(() {
         _currentPage = pageKeys[index];
-        currentPageIndex = index;
+        WasteProtector.currentPageIndex = index;
       });
     }
   }
 
-  Widget _buildOffstageNavigator(String pageItem) {
+  static Widget _buildOffstageNavigator(String pageItem) {
     return Offstage(
         offstage: _currentPage != pageItem,
         child: WasteProtectorNavigator(
-            navigatorKey: _navigatorKeys[pageItem]!, pageItem: pageItem));
+            navigatorKey: WasteProtector.navigatorKeys[pageItem]!,
+            pageItem: pageItem));
   }
+
+  //static GlobalKey<NavigatorState> getKey(String page)
 
   @override
   Widget build(BuildContext context) {
@@ -69,16 +54,15 @@ class _WasteProtectorState extends State<WasteProtector> {
                 //selectionColor: Color(0xFF619267)),
                 textTheme: Theme.of(context).textTheme.apply(
                       fontFamily: 'Fredoka',
-                      bodyColor: Color(0xFF353535),
-                      displayColor: Color(0xFF353535),
-                      decorationColor: Color(0xFF353535),
+                      bodyColor: const Color(0xFF353535),
+                      displayColor: const Color(0xFF353535),
+                      decorationColor: const Color(0xFF353535),
                     )),
             home: WillPopScope(
               onWillPop: () async {
-                final isFirstRouteInCurrentPage =
-                    !await _navigatorKeys[_currentPage]!
-                        .currentState!
-                        .maybePop();
+                final isFirstRouteInCurrentPage = !await WasteProtector
+                    .navigatorKeys[_currentPage]!.currentState!
+                    .maybePop();
                 if (isFirstRouteInCurrentPage) {
                   if (_currentPage != "Pantry") {
                     _selectPage('Pantry', 1);
@@ -88,6 +72,7 @@ class _WasteProtectorState extends State<WasteProtector> {
                 return isFirstRouteInCurrentPage;
               },
               child: Scaffold(
+                  backgroundColor: const Color(0xFF87D68D),
                   body: Stack(children: <Widget>[
                     _buildOffstageNavigator("Pantry"),
                     _buildOffstageNavigator("Cookbook"),
@@ -100,7 +85,7 @@ class _WasteProtectorState extends State<WasteProtector> {
                     onDestinationSelected: (int index) {
                       _selectPage(pageKeys[index], index);
                     },
-                    selectedIndex: currentPageIndex,
+                    selectedIndex: WasteProtector.currentPageIndex,
                     destinations: <Widget>[
                       NavigationDestination(
                         icon: Image.asset(

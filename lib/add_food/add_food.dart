@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:waste_protector/add_food/add_food_appbar.dart';
 import 'package:waste_protector/add_food/date_text_formatter.dart';
+import 'package:waste_protector/add_food/food_item.dart';
+import 'package:waste_protector/pantry/pantry.dart';
 
 class AddFood extends StatefulWidget {
-  AddFood({super.key});
+  const AddFood({super.key});
+
+  static PantryList foodItems = PantryList();
 
   @override
   State<AddFood> createState() => _AddFoodState();
@@ -15,7 +19,11 @@ class _AddFoodState extends State<AddFood> {
   final TextEditingController _expirationDateController =
       TextEditingController();
 
-  final List<String> _labelTexts = [
+  final _quantityKey = GlobalKey<FormState>();
+
+  static int _foodCount = 0;
+
+  List<String> _labelTexts = [
     "Enter Food Name:",
     "Enter Food Name",
     "Enter Expiration Date (MM/DD/YY):",
@@ -23,50 +31,64 @@ class _AddFoodState extends State<AddFood> {
     "Select Quantity:",
     "Quantity",
     "Submit",
+    ""
   ];
 
-  int _dropdownValue = 1;
+  final List<Image> foodIcons = [
+    Image.asset('assets/project_images/apple_icon.png'),
+    Image.asset('assets/project_images/orange_icon.png'),
+    Image.asset('assets/project_images/lemon_icon.png'),
+    Image.asset('assets/project_images/watermelon_icon.png'),
+    Image.asset('assets/project_images/pineapple_icon.png')
+  ];
 
-  String _foodName = "";
-  String _foodExpirationDate = "";
-  int _foodQuantity = 0;
+  List<int> daysInAMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  int _dropdownValue = 1;
 
   final GlobalKey<FormFieldState> _foodItemKey = GlobalKey<FormFieldState>();
 
   final GlobalKey<FormFieldState> _expirationDateKey =
       GlobalKey<FormFieldState>();
 
-  void setFoodValues() {
-    _foodName = _foodNameController.text;
-    _foodExpirationDate = _expirationDateController.text;
-    _foodQuantity = _dropdownValue;
+  void addFoodItem() {
+    String foodName = _foodNameController.text;
+    String foodExpirationDate = _expirationDateController.text;
+    int foodQuantity = _dropdownValue;
+    Image foodIcon = foodIcons[_foodCount % foodIcons.length];
+
+    FoodItem foodItem = FoodItem(
+      foodName: foodName,
+      expirationDate: foodExpirationDate,
+      quantity: foodQuantity,
+      foodIcon: foodIcon,
+    );
+
+    AddFood.foodItems.add(foodItem);
+    _foodCount += 1;
   }
 
-  final List<int> daysInAMonth = [
-    0,
-    31,
-    28,
-    31,
-    30,
-    31,
-    30,
-    31,
-    31,
-    30,
-    31,
-    30,
-    31,
-    0
-  ]; //leap years are the bane of my existence
+  String _displaySubmitText(String foodName) {
+    return "Successfully added $foodName to your pantry!";
+  }
 
   Widget _buildSubmitButton() => MaterialButton(
       onPressed: () {
         if (_foodItemKey.currentState!.validate() &&
             _expirationDateKey.currentState!.validate()) {
-          setFoodValues();
+          addFoodItem();
+          setState(() {
+            _labelTexts[_labelTexts.length - 1] =
+                _displaySubmitText(_foodNameController.text);
+          });
+          _foodNameController.clear();
+          _expirationDateController.clear();
+          _quantityKey.currentState?.reset();
         }
       },
       color: const Color(0xFF619267),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(50))),
       child: const Text(
         'Add Food',
         style: TextStyle(color: Color(0xFFF7FFF6)),
@@ -89,6 +111,8 @@ class _AddFoodState extends State<AddFood> {
               borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
+          focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
           prefixIcon: Icon(Icons.fastfood),
           prefixIconColor: Color(0xFF619267),
           focusColor: Color(0xFF619267),
@@ -108,8 +132,11 @@ class _AddFoodState extends State<AddFood> {
           } else {
             int month = int.parse(value.substring(0, 2));
             int day = int.parse(value.substring(3, 5));
-
-            if (month > 12 || day > daysInAMonth[month]) {
+            int year = int.parse(value.substring(6, 8));
+            if (year % 4 == 0) {
+              daysInAMonth[2] = 29;
+            }
+            if (month < 1 || month > 12 || day > daysInAMonth[month]) {
               return "ERROR: Please enter a valid date";
             }
           }
@@ -125,6 +152,8 @@ class _AddFoodState extends State<AddFood> {
           enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
           errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
+          focusedErrorBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
           prefixIcon: Icon(Icons.calendar_month),
           prefixIconColor: Color(0xFF619267),
@@ -180,7 +209,7 @@ class _AddFoodState extends State<AddFood> {
       return Padding(
           padding: EdgeInsets.only(
               top: topPadding * 2,
-              bottom: bottomPadding,
+              bottom: bottomPadding * 2,
               left: rightPadding * 2,
               right: rightPadding * 2),
           child: _buildSubmitButton());
@@ -209,12 +238,11 @@ class _AddFoodState extends State<AddFood> {
         backgroundColor: const Color(0xFF87D68D),
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(height / 6), child: AddFoodAppBar()),
-        body: Container(
-            child: ListView.builder(
-                itemCount: _labelTexts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _buildPaddedForm(_labelTexts[index], height / 35,
-                      height / 50, width / 15, width / 10);
-                })));
+        body: ListView.builder(
+            itemCount: _labelTexts.length,
+            itemBuilder: (BuildContext context, int index) {
+              return _buildPaddedForm(_labelTexts[index], height / 35,
+                  height / 50, width / 15, width / 10);
+            }));
   }
 }

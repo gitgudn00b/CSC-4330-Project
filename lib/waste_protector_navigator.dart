@@ -5,7 +5,7 @@ import 'package:waste_protector/pantry/pantry.dart';
 import 'package:waste_protector/recipes/recipes.dart';
 
 class WasteProtectorNavigator extends StatelessWidget {
-  WasteProtectorNavigator(
+  const WasteProtectorNavigator(
       {super.key, required this.navigatorKey, required this.pageItem});
   final GlobalKey<NavigatorState> navigatorKey;
   final String pageItem;
@@ -13,15 +13,16 @@ class WasteProtectorNavigator extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget child;
     if (pageItem == "Pantry") {
-      child = Pantry();
+      child = Pantry(pantryList: AddFood.foodItems);
     } else if (pageItem == "Cookbook") {
       child = Cookbook();
     } else if (pageItem == "Add Food") {
       child = AddFood();
     } else if (pageItem == "Recipe") {
       child = Recipe();
-    } else
+    } else {
       child = Container();
+    }
     return Navigator(
       key: navigatorKey,
       onGenerateRoute: (routeSettings) {
