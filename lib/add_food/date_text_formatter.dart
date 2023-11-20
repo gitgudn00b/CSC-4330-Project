@@ -1,9 +1,8 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class DateTextFormatter extends TextInputFormatter {
-  static const _maxChars = 8;
+  static const _maxChars = 6;
 
   @override
   TextEditingValue formatEditUpdate(

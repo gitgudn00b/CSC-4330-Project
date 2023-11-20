@@ -33,6 +33,7 @@ class _PantryBarState extends State<PantryAppBar> {
         });
 
     return AppBar(
+      automaticallyImplyLeading: false,
       title: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
