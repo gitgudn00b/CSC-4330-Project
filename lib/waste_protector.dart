@@ -42,71 +42,55 @@ class _WasteProtectorState extends State<WasteProtector> {
             pageItem: pageItem));
   }
 
-  //static GlobalKey<NavigatorState> getKey(String page)
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-                //textSelectionTheme: const TextSelectionThemeData(
-                //selectionColor: Color(0xFF619267)),
-                textTheme: Theme.of(context).textTheme.apply(
-                      fontFamily: 'Fredoka',
-                      bodyColor: const Color(0xFF353535),
-                      displayColor: const Color(0xFF353535),
-                      decorationColor: const Color(0xFF353535),
-                    )),
-            home: WillPopScope(
-              onWillPop: () async {
-                final isFirstRouteInCurrentPage = !await WasteProtector
-                    .navigatorKeys[_currentPage]!.currentState!
-                    .maybePop();
-                if (isFirstRouteInCurrentPage) {
-                  if (_currentPage != "Pantry") {
-                    _selectPage('Pantry', 1);
-                    return false;
-                  }
-                }
-                return isFirstRouteInCurrentPage;
-              },
-              child: Scaffold(
-                  backgroundColor: const Color(0xFF87D68D),
-                  body: Stack(children: <Widget>[
-                    _buildOffstageNavigator("Pantry"),
-                    _buildOffstageNavigator("Cookbook"),
-                    _buildOffstageNavigator("Add Food"),
-                    _buildOffstageNavigator("Recipe"),
-                  ]),
-                  bottomNavigationBar: NavigationBar(
-                    backgroundColor: const Color(0xFFF7FFF6),
-                    indicatorColor: const Color(0xFFB8DDB3),
-                    onDestinationSelected: (int index) {
-                      _selectPage(pageKeys[index], index);
-                    },
-                    selectedIndex: WasteProtector.currentPageIndex,
-                    destinations: <Widget>[
-                      NavigationDestination(
-                        icon: Image.asset(
-                            'assets/project_images/home_button_rs.png'),
-                        label: 'Home',
-                      ),
-                      NavigationDestination(
-                        icon: Image.asset('assets/project_images/cookbook.png'),
-                        label: 'Cookbook',
-                      ),
-                      NavigationDestination(
-                        icon:
-                            Image.asset('assets/project_images/plus_sign.png'),
-                        label: 'Add Food',
-                      ),
-                      NavigationDestination(
-                        icon: Image.asset('assets/project_images/chef_hat.png'),
-                        label: 'Get Recipes',
-                      ),
-                    ],
-                  )),
-            )));
+    return WillPopScope(
+      onWillPop: () async {
+        final isFirstRouteInCurrentPage = !await WasteProtector
+            .navigatorKeys[_currentPage]!.currentState!
+            .maybePop();
+        if (isFirstRouteInCurrentPage) {
+          if (_currentPage != "Pantry") {
+            _selectPage('Pantry', 1);
+            return false;
+          }
+        }
+        return isFirstRouteInCurrentPage;
+      },
+      child: Scaffold(
+          backgroundColor: const Color(0xFF87D68D),
+          body: Stack(children: <Widget>[
+            _buildOffstageNavigator("Pantry"),
+            _buildOffstageNavigator("Cookbook"),
+            _buildOffstageNavigator("Add Food"),
+            _buildOffstageNavigator("Recipe"),
+          ]),
+          bottomNavigationBar: NavigationBar(
+            backgroundColor: const Color(0xFFF7FFF6),
+            indicatorColor: const Color(0xFFB8DDB3),
+            onDestinationSelected: (int index) {
+              _selectPage(pageKeys[index], index);
+            },
+            selectedIndex: WasteProtector.currentPageIndex,
+            destinations: <Widget>[
+              NavigationDestination(
+                icon: Image.asset('assets/project_images/home_button_rs.png'),
+                label: 'Home',
+              ),
+              NavigationDestination(
+                icon: Image.asset('assets/project_images/cookbook.png'),
+                label: 'Cookbook',
+              ),
+              NavigationDestination(
+                icon: Image.asset('assets/project_images/plus_sign.png'),
+                label: 'Add Food',
+              ),
+              NavigationDestination(
+                icon: Image.asset('assets/project_images/chef_hat.png'),
+                label: 'Get Recipes',
+              ),
+            ],
+          )),
+    );
   }
 }

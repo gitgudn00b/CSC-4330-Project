@@ -76,6 +76,11 @@ class _AddFoodState extends State<AddFood> {
       onPressed: () {
         if (_foodItemKey.currentState!.validate() &&
             _expirationDateKey.currentState!.validate()) {
+          String foodName = _foodNameController.text;
+          String foodExpirationDate = _expirationDateController.text;
+          int foodQuantity = _dropdownValue;
+          Image foodIcon = foodIcons[_foodCount % foodIcons.length];
+
           addFoodItem();
           setState(() {
             _labelTexts[_labelTexts.length - 1] =
@@ -94,7 +99,7 @@ class _AddFoodState extends State<AddFood> {
         style: TextStyle(color: Color(0xFFF7FFF6)),
       ));
 
-  Widget _buildTextField(String textLabel) => TextFormField(
+  Widget _buildTextField() => TextFormField(
       validator: (value) {
         if (value == null) return "ERROR: Please enter the name of your item";
         if (value.isEmpty) return "ERROR: Please enter the name of your item";
@@ -120,7 +125,7 @@ class _AddFoodState extends State<AddFood> {
           filled: true,
           errorStyle: TextStyle(color: Color(0xFF353535))));
 
-  Widget _buildDateField(String textLabel) => TextFormField(
+  Widget _buildDateField() => TextFormField(
       inputFormatters: [DateTextFormatter()],
       key: _expirationDateKey,
       validator: (value) {
@@ -199,12 +204,12 @@ class _AddFoodState extends State<AddFood> {
       return Padding(
           padding: EdgeInsets.only(
               bottom: bottomPadding, left: leftPadding, right: rightPadding),
-          child: _buildTextField(labelText));
+          child: _buildTextField());
     } else if (labelText == "Enter Expiration Date") {
       return Padding(
           padding: EdgeInsets.only(
               bottom: bottomPadding, left: leftPadding, right: rightPadding),
-          child: _buildDateField(labelText));
+          child: _buildDateField());
     } else if (labelText == "Submit") {
       return Padding(
           padding: EdgeInsets.only(
