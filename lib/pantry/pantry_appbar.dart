@@ -15,8 +15,6 @@ class _PantryBarState extends State<PantryAppBar> {
         fontSize: 56,
       ));
 
-  //Image.asset('assets/project_images/default_pfp.png', scale: 15);
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -25,7 +23,6 @@ class _PantryBarState extends State<PantryAppBar> {
         icon: Image.asset('assets/project_images/default_pfp.png'),
         iconSize: 75,
         onPressed: () {
-          // _WasteProtectorState.currentPageIndex=4;
           Navigator.push(
               context,
               MaterialPageRoute<Scaffold>(
