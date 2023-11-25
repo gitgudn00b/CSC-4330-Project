@@ -23,10 +23,10 @@ class _AddFoodState extends State<AddFood> {
 
   static int _foodCount = 0;
 
-  List<String> _labelTexts = [
+  final List<String> _labelTexts = [
     "Enter Food Name:",
     "Enter Food Name",
-    "Enter Expiration Date (MM/DD/YY):",
+    "Enter Expiration Date (MMDDYY):",
     "Enter Expiration Date",
     "Select Quantity:",
     "Quantity",
@@ -50,6 +50,21 @@ class _AddFoodState extends State<AddFood> {
 
   final GlobalKey<FormFieldState> _expirationDateKey =
       GlobalKey<FormFieldState>();
+
+  final InputDecoration _textFieldDecoration = const InputDecoration(
+      focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
+      enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF619267), width: 4.0)),
+      errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF619267), width: 4.0)),
+      focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF619267), width: 4.0)),
+      prefixIconColor: Color(0xFF619267),
+      focusColor: Color(0xFF619267),
+      fillColor: Color(0xFFF7FFF6),
+      filled: true,
+      errorStyle: TextStyle(color: Color(0xFF353535)));
 
   void addFoodItem() {
     String foodName = _foodNameController.text;
@@ -91,7 +106,7 @@ class _AddFoodState extends State<AddFood> {
           _quantityKey.currentState?.reset();
         }
       },
-      color: const Color(0xFF619267),
+      color: const Color(0xFF4E7A53),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(50))),
       child: const Text(
@@ -109,21 +124,8 @@ class _AddFoodState extends State<AddFood> {
       controller: _foodNameController,
       keyboardType: TextInputType.text,
       cursorColor: const Color(0xFF619267),
-      decoration: const InputDecoration(
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-          enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-          errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-          focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-          prefixIcon: Icon(Icons.fastfood),
-          prefixIconColor: Color(0xFF619267),
-          focusColor: Color(0xFF619267),
-          fillColor: Color(0xFFF7FFF6),
-          filled: true,
-          errorStyle: TextStyle(color: Color(0xFF353535))));
+      decoration: _textFieldDecoration.copyWith(
+          prefixIcon: const Icon(Icons.fastfood)));
 
   Widget _buildDateField() => TextFormField(
       inputFormatters: [DateTextFormatter()],
@@ -145,40 +147,22 @@ class _AddFoodState extends State<AddFood> {
               return "ERROR: Please enter a valid date";
             }
           }
+          daysInAMonth[2] = 28;
           return null;
         }
       },
       controller: _expirationDateController,
       keyboardType: TextInputType.datetime,
       cursorColor: const Color(0xFF619267),
-      decoration: const InputDecoration(
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-          enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-          errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-          focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-          prefixIcon: Icon(Icons.calendar_month),
-          prefixIconColor: Color(0xFF619267),
-          focusColor: Color(0xFF619267),
-          fillColor: Color(0xFFF7FFF6),
-          filled: true,
-          errorStyle: TextStyle(color: Color(0xFF353535))));
+      decoration: _textFieldDecoration.copyWith(
+          prefixIcon: const Icon(Icons.calendar_month)));
 
   Widget _buildDropdownField() => DropdownButtonFormField(
         value: _dropdownValue,
-        decoration: const InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
-            prefixIcon: Icon(Icons.format_list_bulleted),
-            prefixIconColor: Color(0xFF619267),
-            focusColor: Color(0xFF619267),
-            fillColor: Color(0xFFF7FFF6),
-            filled: true),
+        decoration: _textFieldDecoration.copyWith(
+            prefixIcon: const Icon(Icons.format_list_bulleted),
+            focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFF619267), width: 4.0))),
         onChanged: (int? value) {
           setState(() {
             _dropdownValue = value!;
@@ -240,9 +224,7 @@ class _AddFoodState extends State<AddFood> {
     var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: const Color(0xFF87D68D),
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(height / 6), child: AddFoodAppBar()),
+        appBar: AddFoodAppBar(),
         body: ListView.builder(
             itemCount: _labelTexts.length,
             itemBuilder: (BuildContext context, int index) {

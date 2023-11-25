@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waste_protector/main.dart';
+import 'package:waste_protector/register_login/login.dart';
 import 'package:waste_protector/settings/settings_appbar.dart';
 
 class Settings extends StatefulWidget {
@@ -22,7 +23,8 @@ class _SettingsState extends State<Settings> {
       _errorMessage = 'Unexpected error occurred';
     } finally {
       if (mounted) {
-        Navigator.of(context).popAndPushNamed('/login');
+        WasteProtectorLogin.logoutButtonPressed = true;
+        Navigator.of(context).pushNamed('/login');
       }
     }
   }
@@ -33,14 +35,17 @@ class _SettingsState extends State<Settings> {
           padding: EdgeInsets.symmetric(horizontal: width / 4),
           child: MaterialButton(
               onPressed: _signOut,
-              color: const Color(0xFF619267),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(50))),
               height: height / 10,
+              color: const Color(0xFF4E7A53),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.logout, color: Color(0xFFF7FFF6)),
+                  Icon(
+                    Icons.logout,
+                    color: Color(0xFFF7FFF6),
+                  ),
                   Text(
                     'Logout',
                     style: TextStyle(color: Color(0xFFF7FFF6)),
@@ -53,7 +58,6 @@ class _SettingsState extends State<Settings> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-        backgroundColor: const Color(0xFF87D68D),
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(height / 6),
             child: SettingsAppBar()),

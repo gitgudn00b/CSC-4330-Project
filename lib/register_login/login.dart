@@ -1,24 +1,19 @@
 import 'dart:async';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waste_protector/main.dart';
-import 'package:waste_protector/pantry/pantry.dart';
 import 'package:waste_protector/register_login/login_appbar.dart';
-import 'package:waste_protector/register_login/register.dart';
-import 'package:waste_protector/waste_protector.dart';
 
 class WasteProtectorLogin extends StatefulWidget {
   const WasteProtectorLogin({super.key});
 
   @override
   State<WasteProtectorLogin> createState() => _WasteProtectorLoginState();
+
+  static bool logoutButtonPressed = false;
 }
 
 class _WasteProtectorLoginState extends State<WasteProtectorLogin> {
-  final GlobalKey<FormFieldState> _usernameKey = GlobalKey<FormFieldState>();
-
   final TextEditingController _usernameController = TextEditingController();
 
   Image logo = Image.asset('assets/project_images/wp_logo.png',
@@ -47,12 +42,6 @@ class _WasteProtectorLoginState extends State<WasteProtectorLogin> {
         email: _usernameController.text.trim(),
         emailRedirectTo: 'io.supabase.flutterquickstart://login-callback/',
       );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Check your email for a login link!')),
-        );
-        _usernameController.clear();
-      }
     } on AuthException catch (error) {
       _labelTexts[_labelTexts.length - 1] = "Authentication Error Occurred";
     } catch (error) {
@@ -61,6 +50,7 @@ class _WasteProtectorLoginState extends State<WasteProtectorLogin> {
       if (mounted) {
         setState(() {
           _isLoading = false;
+          WasteProtectorLogin.logoutButtonPressed = false;
           _labelTexts[_labelTexts.length - 1] =
               "Please check your email for login link";
         });
@@ -75,6 +65,7 @@ class _WasteProtectorLoginState extends State<WasteProtectorLogin> {
       final session = data.session;
       if (session != null) {
         _redirecting = true;
+        WasteProtectorLogin.logoutButtonPressed = false;
         Navigator.of(context).pushReplacementNamed('/pantry');
       }
     });
@@ -137,12 +128,16 @@ class _WasteProtectorLoginState extends State<WasteProtectorLogin> {
           child: _buildUsernameField());
     } else if (labelText == "login") {
       return Padding(
-          padding:
-              EdgeInsets.only(left: rightPadding * 2, right: rightPadding * 2),
+          padding: EdgeInsets.only(
+              top: topPadding,
+              left: rightPadding * 2,
+              right: rightPadding * 2,
+              bottom: topPadding),
           child: _buildSubmitButton(context));
     }
     return Padding(
-        padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
+        padding: EdgeInsets.only(
+            top: topPadding, left: leftPadding, right: rightPadding),
         child: Text(labelText));
   }
 
@@ -150,29 +145,16 @@ class _WasteProtectorLoginState extends State<WasteProtectorLogin> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    return MaterialApp(
-      initialRoute: '/',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          //textSelectionTheme: const TextSelectionThemeData(
-          //selectionColor: Color(0xFF619267)),
-          textTheme: Theme.of(context).textTheme.apply(
-                fontFamily: 'Fredoka',
-                bodyColor: const Color(0xFF353535),
-                displayColor: const Color(0xFF353535),
-                decorationColor: const Color(0xFF353535),
-              )),
-      home: Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(height / 6), child: LoginAppBar()),
-        body: ListView.builder(
-            itemCount: _labelTexts.length,
-            itemBuilder: (BuildContext context, int index) {
-              return _buildPaddedForm(_labelTexts[index], height / 35,
-                  height / 50, width / 15, width / 10, context);
-            }),
-        backgroundColor: const Color(0xFFF7FFF6),
-      ),
+    return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(height / 6), child: LoginAppBar()),
+      body: ListView.builder(
+          itemCount: _labelTexts.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _buildPaddedForm(_labelTexts[index], height / 35,
+                height / 50, width / 15, width / 10, context);
+          }),
+      backgroundColor: const Color(0xFFF7FFF6),
     );
   }
 }

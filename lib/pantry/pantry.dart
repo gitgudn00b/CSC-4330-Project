@@ -36,7 +36,7 @@ class _PantryState extends State<Pantry> {
               mainAxisMargin: padding / 6,
               radius: Radius.circular(50),
               thickness: padding / 6,
-              thumbColor: Color(0xFF619267),
+              thumbColor: Color(0xFF6db078),
               child: ListView.builder(
                 padding: EdgeInsets.only(bottom: padding),
                 itemBuilder: (BuildContext context, int index) {

@@ -11,7 +11,6 @@ class SettingsAppBar extends AppBar {
 class _SettingsAppBarState extends State<SettingsAppBar> {
   Text titleText = const Text('Settings',
       style: TextStyle(
-        color: Color(0xFF353535),
         fontSize: 56,
       ));
 
@@ -19,13 +18,14 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+
     IconButton backButton = IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        icon: Image.asset('assets/project_images/back_button.png'),
         color: const Color(0xFF619267),
         onPressed: () => Navigator.of(context).pop(),
-        alignment: const Alignment(-1.0, -1.0));
+        alignment: Alignment(100, 100));
 
-    var height = MediaQuery.of(context).size.height;
     return AppBar(
       automaticallyImplyLeading: false,
       flexibleSpace: backButton,
@@ -34,9 +34,6 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [settingsGear, titleText],
       ),
-      backgroundColor: const Color(0xFFF7FFF6),
-      elevation: 0,
-      toolbarHeight: height / 6,
     );
   }
 }

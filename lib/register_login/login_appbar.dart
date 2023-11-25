@@ -8,26 +8,28 @@ class LoginAppBar extends AppBar {
 }
 
 class _LoginBarState extends State<LoginAppBar> {
-  Text wasteText = const Text('WASTE',
-      style: TextStyle(
-        color: Color(0xFF353535),
-        fontSize: 40,
-      ));
-  Text protectorText = const Text('PROTECTOR',
-      style: TextStyle(
-        color: Color(0xFFF7FFF6),
-        fontSize: 40,
-      ));
+  FittedBox _buildTitleText(double width, double height) {
+    Text wasteText = Text(
+      'WASTE',
+    );
+    Text protectorText = const Text('PROTECTOR',
+        style: TextStyle(
+          color: Color(0xFFF7FFF6),
+        ));
+    return FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [wasteText, protectorText]));
+  }
 
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return AppBar(
-      title: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [wasteText, protectorText],
-      ),
+      title: _buildTitleText(width, height),
       backgroundColor: const Color(0xFF87D68D),
       elevation: 0,
       toolbarHeight: height / 6,

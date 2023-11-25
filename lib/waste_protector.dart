@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waste_protector/register_login/login.dart';
 import 'package:waste_protector/waste_protector_navigator.dart';
 
 class WasteProtector extends StatefulWidget {
@@ -11,6 +12,7 @@ class WasteProtector extends StatefulWidget {
     "Cookbook": GlobalKey<NavigatorState>(),
     "Add Food": GlobalKey<NavigatorState>(),
     "Recipe": GlobalKey<NavigatorState>(),
+    "Login": GlobalKey<NavigatorState>()
   };
 
   @override
@@ -20,7 +22,7 @@ class WasteProtector extends StatefulWidget {
 class _WasteProtectorState extends State<WasteProtector> {
   static String _currentPage = "Pantry";
 
-  List<String> pageKeys = ["Pantry", "Cookbook", "Add Food", "Recipe"];
+  List<String> pageKeys = ["Pantry", "Cookbook", "Add Food", "Recipe", "Login"];
 
   void _selectPage(String pageItem, int index) {
     if (pageItem == _currentPage) {
@@ -46,6 +48,7 @@ class _WasteProtectorState extends State<WasteProtector> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        if (WasteProtectorLogin.logoutButtonPressed) return true;
         final isFirstRouteInCurrentPage = !await WasteProtector
             .navigatorKeys[_currentPage]!.currentState!
             .maybePop();
@@ -66,8 +69,6 @@ class _WasteProtectorState extends State<WasteProtector> {
             _buildOffstageNavigator("Recipe"),
           ]),
           bottomNavigationBar: NavigationBar(
-            backgroundColor: const Color(0xFFF7FFF6),
-            indicatorColor: const Color(0xFFB8DDB3),
             onDestinationSelected: (int index) {
               _selectPage(pageKeys[index], index);
             },

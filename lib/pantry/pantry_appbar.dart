@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:waste_protector/settings/settings.dart';
 
@@ -11,7 +13,6 @@ class PantryAppBar extends AppBar {
 class _PantryBarState extends State<PantryAppBar> {
   Text titleText = const Text('Welcome!',
       style: TextStyle(
-        color: Color(0xFF353535),
         fontSize: 56,
       ));
 
@@ -21,7 +22,7 @@ class _PantryBarState extends State<PantryAppBar> {
 
     IconButton profilePicture = IconButton(
         icon: Image.asset('assets/project_images/default_pfp.png'),
-        iconSize: 75,
+        iconSize: height / 8,
         onPressed: () {
           Navigator.push(
               context,
@@ -32,13 +33,10 @@ class _PantryBarState extends State<PantryAppBar> {
     return AppBar(
       automaticallyImplyLeading: false,
       title: Row(
-        mainAxisSize: MainAxisSize.max,
+        //mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [profilePicture, titleText],
+        children: [profilePicture, const Text("Welcome!")],
       ),
-      backgroundColor: const Color(0xFFF7FFF6),
-      elevation: 0,
-      toolbarHeight: height / 6,
     );
   }
 }
