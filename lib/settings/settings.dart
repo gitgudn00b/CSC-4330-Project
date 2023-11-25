@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waste_protector/main.dart';
@@ -27,6 +28,9 @@ class _SettingsState extends State<Settings> {
         Navigator.of(context).pushNamed('/login');
       }
     }
+
+    SystemNavigator.pop();
+
   }
 
   Widget _buildLogoutButton(
