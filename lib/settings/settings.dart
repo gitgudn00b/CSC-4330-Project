@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waste_protector/main.dart';
+import 'package:waste_protector/allergies/allergies.dart';
 import 'package:waste_protector/settings/settings_appbar.dart';
 
 class Settings extends StatefulWidget {
@@ -56,6 +57,35 @@ class _SettingsState extends State<Settings> {
                 ],
               )));
 
+  Widget _buildAllergiesButton(
+          BuildContext context, double height, double width) =>
+      Padding(
+          padding: EdgeInsets.symmetric(horizontal: width / 4),
+          child: MaterialButton(
+              onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute<Scaffold>(
+                  builder: (context) => const Allergies()));
+        },
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(50))),
+              height: height / 10,
+              color: const Color(0xFF4E7A53),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.health_and_safety_outlined,
+                    color: Color(0xFFF7FFF6),
+                  ),
+                  Text(
+                    'Allergies',
+                    style: TextStyle(color: Color(0xFFF7FFF6)),
+                  )
+                ],
+              )));
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -70,6 +100,8 @@ class _SettingsState extends State<Settings> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+              _buildAllergiesButton(context, height, width),
+              SizedBox(height: 10),
               _buildLogoutButton(context, height, width),
               Text(_errorMessage)
             ]))));
