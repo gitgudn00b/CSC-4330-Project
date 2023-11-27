@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:waste_protector/register_login/login.dart';
+import 'package:waste_protector/login/login.dart';
 import 'package:waste_protector/splash_page.dart';
+import 'package:waste_protector/user.dart';
 import 'package:waste_protector/waste_protector.dart';
 
 void main() async {
@@ -19,9 +20,13 @@ final supabase = Supabase.instance.client;
 class WasteProtectorInit extends StatelessWidget {
   const WasteProtectorInit({super.key});
 
+  static WasteProtectorUser getLoggedInUser() =>
+      WasteProtectorUser(userId: supabase.auth.currentUser!.id);
+
+  @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
+    //var width = MediaQuery.of(context).size.width;
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -56,7 +61,9 @@ class WasteProtectorInit extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           '/': (context) => const SplashPage(),
           '/login': (context) => const WasteProtectorLogin(),
-          '/pantry': (context) => const WasteProtector(),
+          '/pantry': (context) => WasteProtector(
+                loggedInUser: getLoggedInUser(),
+              ),
         });
   }
 }

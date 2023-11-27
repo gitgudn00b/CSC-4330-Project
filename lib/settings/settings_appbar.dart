@@ -24,7 +24,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
         icon: Image.asset('assets/project_images/back_button.png'),
         color: const Color(0xFF619267),
         onPressed: () => Navigator.of(context).pop(),
-        alignment: Alignment(100, 100));
+        alignment: const Alignment(1, 50));
 
     return AppBar(
       automaticallyImplyLeading: false,
