@@ -22,6 +22,7 @@ class _PantryBarState extends State<PantryAppBar> {
 
     IconButton profilePicture = IconButton(
         icon: Image.asset('assets/project_images/default_pfp.png'),
+        splashRadius: 1,
         iconSize: height / 8,
         onPressed: () {
           Navigator.push(
@@ -31,12 +32,14 @@ class _PantryBarState extends State<PantryAppBar> {
         });
 
     return AppBar(
-      automaticallyImplyLeading: false,
-      title: Row(
-        //mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [profilePicture, const Text("Welcome!")],
-      ),
-    );
+        automaticallyImplyLeading: false,
+        title: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Row(
+            //mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [profilePicture, const Text("Welcome!")],
+          ),
+        ));
   }
 }

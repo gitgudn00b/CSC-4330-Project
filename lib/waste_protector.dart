@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:waste_protector/register_login/login.dart';
+import 'package:waste_protector/user.dart';
 import 'package:waste_protector/waste_protector_navigator.dart';
 
 class WasteProtector extends StatefulWidget {
-  const WasteProtector({super.key});
+  WasteProtector({super.key, required this.loggedInUser});
 
   static int currentPageIndex = 0;
+
+  WasteProtectorUser loggedInUser;
 
   static final Map<String, GlobalKey<NavigatorState>> navigatorKeys = {
     "Pantry": GlobalKey<NavigatorState>(),
@@ -48,7 +50,6 @@ class _WasteProtectorState extends State<WasteProtector> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (WasteProtectorLogin.logoutButtonPressed) return true;
         final isFirstRouteInCurrentPage = !await WasteProtector
             .navigatorKeys[_currentPage]!.currentState!
             .maybePop();

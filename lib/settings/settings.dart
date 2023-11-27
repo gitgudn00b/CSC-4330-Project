@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waste_protector/main.dart';
-import 'package:waste_protector/register_login/login.dart';
 import 'package:waste_protector/settings/settings_appbar.dart';
 
 class Settings extends StatefulWidget {
@@ -23,8 +23,7 @@ class _SettingsState extends State<Settings> {
       _errorMessage = 'Unexpected error occurred';
     } finally {
       if (mounted) {
-        WasteProtectorLogin.logoutButtonPressed = true;
-        Navigator.of(context).pushNamed('/login');
+        SystemNavigator.pop();
       }
     }
   }

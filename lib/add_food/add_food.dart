@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waste_protector/add_food/add_food_appbar.dart';
 import 'package:waste_protector/add_food/date_text_formatter.dart';
 import 'package:waste_protector/add_food/food_item.dart';
+import 'package:waste_protector/main.dart';
 import 'package:waste_protector/pantry/pantry.dart';
+import 'package:waste_protector/user.dart';
 
 class AddFood extends StatefulWidget {
   const AddFood({super.key});
@@ -14,14 +17,35 @@ class AddFood extends StatefulWidget {
 }
 
 class _AddFoodState extends State<AddFood> {
+  WasteProtectorUser loggedInUser = WasteProtectorInit.getLoggedInUser();
+
+  List<String> currentFoodNames = [];
+  List<String> currentExpirationDates = [];
+  List<int> currentQuantities = [];
+  int foodCount = 0;
+
+  void _getCurrentUserFoodItems() async {
+    if (!loggedInUser.userInitialized) {
+      await loggedInUser.initWasteProtectorUser();
+    }
+    currentFoodNames = loggedInUser.foodNames;
+    currentExpirationDates = loggedInUser.expirationDates;
+    currentQuantities = loggedInUser.quantities;
+    foodCount = loggedInUser.foodCount;
+  }
+
+  @override
+  void initState() {
+    _getCurrentUserFoodItems();
+    super.initState();
+  }
+
   final TextEditingController _foodNameController = TextEditingController();
 
   final TextEditingController _expirationDateController =
       TextEditingController();
 
   final _quantityKey = GlobalKey<FormState>();
-
-  static int _foodCount = 0;
 
   final List<String> _labelTexts = [
     "Enter Food Name:",
@@ -32,14 +56,6 @@ class _AddFoodState extends State<AddFood> {
     "Quantity",
     "Submit",
     ""
-  ];
-
-  final List<Image> foodIcons = [
-    Image.asset('assets/project_images/apple_icon.png'),
-    Image.asset('assets/project_images/orange_icon.png'),
-    Image.asset('assets/project_images/lemon_icon.png'),
-    Image.asset('assets/project_images/watermelon_icon.png'),
-    Image.asset('assets/project_images/pineapple_icon.png')
   ];
 
   List<int> daysInAMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -66,21 +82,39 @@ class _AddFoodState extends State<AddFood> {
       filled: true,
       errorStyle: TextStyle(color: Color(0xFF353535)));
 
-  void addFoodItem() {
+  void addFoodItem() async {
     String foodName = _foodNameController.text;
-    String foodExpirationDate = _expirationDateController.text;
+    String expirationDate = _expirationDateController.text;
     int foodQuantity = _dropdownValue;
-    Image foodIcon = foodIcons[_foodCount % foodIcons.length];
+    Image foodIcon = WasteProtectorUser
+        .foodIcons[foodCount % WasteProtectorUser.foodIcons.length];
+
+    currentFoodNames.add(foodName);
+    currentExpirationDates.add(expirationDate);
+    currentQuantities.add(foodQuantity);
 
     FoodItem foodItem = FoodItem(
       foodName: foodName,
-      expirationDate: foodExpirationDate,
+      expirationDate: expirationDate,
       quantity: foodQuantity,
       foodIcon: foodIcon,
     );
+    try {
+      await supabase.from('food_items').update({
+        'food_names': currentFoodNames,
+        'expiration_dates': currentExpirationDates,
+        'quantity': currentQuantities,
+        'food_count': foodCount + 1,
+      }).eq('id', loggedInUser.userId);
+    } on PostgrestException catch (error) {
+      print(error.code);
+      print(error.hint);
+      print(error.details);
+      print(error.message);
+    }
 
     AddFood.foodItems.add(foodItem);
-    _foodCount += 1;
+    foodCount += 1;
   }
 
   String _displaySubmitText(String foodName) {
@@ -88,14 +122,9 @@ class _AddFoodState extends State<AddFood> {
   }
 
   Widget _buildSubmitButton() => MaterialButton(
-      onPressed: () {
+      onPressed: () async {
         if (_foodItemKey.currentState!.validate() &&
             _expirationDateKey.currentState!.validate()) {
-          String foodName = _foodNameController.text;
-          String foodExpirationDate = _expirationDateController.text;
-          int foodQuantity = _dropdownValue;
-          Image foodIcon = foodIcons[_foodCount % foodIcons.length];
-
           addFoodItem();
           setState(() {
             _labelTexts[_labelTexts.length - 1] =
@@ -145,6 +174,15 @@ class _AddFoodState extends State<AddFood> {
             }
             if (month < 1 || month > 12 || day > daysInAMonth[month]) {
               return "ERROR: Please enter a valid date";
+            } else {
+              DateTime now = new DateTime.now();
+              DateTime date = new DateTime(now.year, now.month, now.day);
+              String stringDate = date.toString().substring(2, 10);
+              int currentDate = int.parse(stringDate.split("-").join());
+              int dateEntered = (year * 10000) + (month * 100) + day;
+              if (dateEntered < currentDate) {
+                return "ERROR: Expirations dates should be in the future";
+              }
             }
           }
           daysInAMonth[2] = 28;

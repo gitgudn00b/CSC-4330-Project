@@ -2,15 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waste_protector/main.dart';
-import 'package:waste_protector/register_login/login_appbar.dart';
+import 'package:waste_protector/login/login_appbar.dart';
 
 class WasteProtectorLogin extends StatefulWidget {
   const WasteProtectorLogin({super.key});
 
   @override
   State<WasteProtectorLogin> createState() => _WasteProtectorLoginState();
-
-  static bool logoutButtonPressed = false;
 }
 
 class _WasteProtectorLoginState extends State<WasteProtectorLogin> {
@@ -50,7 +48,6 @@ class _WasteProtectorLoginState extends State<WasteProtectorLogin> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          WasteProtectorLogin.logoutButtonPressed = false;
           _labelTexts[_labelTexts.length - 1] =
               "Please check your email for login link";
         });
@@ -65,7 +62,6 @@ class _WasteProtectorLoginState extends State<WasteProtectorLogin> {
       final session = data.session;
       if (session != null) {
         _redirecting = true;
-        WasteProtectorLogin.logoutButtonPressed = false;
         Navigator.of(context).pushReplacementNamed('/pantry');
       }
     });

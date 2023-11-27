@@ -9,7 +9,7 @@ class LoginAppBar extends AppBar {
 
 class _LoginBarState extends State<LoginAppBar> {
   FittedBox _buildTitleText(double width, double height) {
-    Text wasteText = Text(
+    Text wasteText = const Text(
       'WASTE',
     );
     Text protectorText = const Text('PROTECTOR',

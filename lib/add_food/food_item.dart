@@ -12,6 +12,7 @@ class FoodItem extends StatelessWidget {
   final String expirationDate;
   final int quantity;
   final Image foodIcon;
+  int expirationDateAsInt = 0;
 
   Text _formatText() {
     return Text(
@@ -20,8 +21,14 @@ class FoodItem extends StatelessWidget {
 
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-
     var width = MediaQuery.of(context).size.width;
+
+    int month = int.parse(expirationDate.substring(0, 2));
+    int day = int.parse(expirationDate.substring(3, 5));
+    int year = int.parse(expirationDate.substring(6, 8));
+
+    expirationDateAsInt = (year * 10000) + (month * 100) + day;
+
     return Container(
         width: width * 0.75,
         height: height / 10.75,
