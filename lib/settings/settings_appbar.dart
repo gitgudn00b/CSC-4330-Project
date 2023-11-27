@@ -21,10 +21,13 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
     var height = MediaQuery.of(context).size.height;
 
     IconButton backButton = IconButton(
-        icon: Image.asset('assets/project_images/back_button.png'),
+        icon: Icon(
+          Icons.arrow_back,
+          size: 30,
+        ),
         color: const Color(0xFF619267),
         onPressed: () => Navigator.of(context).pop(),
-        alignment: const Alignment(1, 50));
+        alignment: const Alignment(-1, 50));
 
     return AppBar(
       automaticallyImplyLeading: false,

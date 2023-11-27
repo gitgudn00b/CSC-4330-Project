@@ -62,6 +62,7 @@ flutter:
   assets:
      - assets/project_images/apple_icon.png
      - assets/project_images/back_button.png
+     - assets/project_images/back_button_rs.png
      - assets/project_images/chef_hat.png
      - assets/project_images/chef_hat_rs.png
      - assets/project_images/cookbook.png
