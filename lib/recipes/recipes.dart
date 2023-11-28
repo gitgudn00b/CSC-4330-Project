@@ -1,5 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:waste_protector/main.dart';
+import 'package:waste_protector/recipes/recipe_tile.dart';
 import 'package:waste_protector/recipes/recipes_appbar.dart';
+import 'package:waste_protector/user.dart';
 
 class Recipe extends StatefulWidget {
   const Recipe({super.key});
@@ -9,17 +15,43 @@ class Recipe extends StatefulWidget {
 }
 
 class _RecipeState extends State<Recipe> {
-  TextField foodName = const TextField(
-      decoration: InputDecoration(
-          labelText: 'Food Name',
-          floatingLabelAlignment: FloatingLabelAlignment.start));
+  List<String> recipes = [];
+
+  List<dynamic> unformattedRecipes = [];
+
+  int lowerBound = Random().nextInt(6500);
+  int upperBound = Random().nextInt(1000) + 5500;
+
+  void _getRecipes() async {
+    WasteProtectorUser loggedInUser = WasteProtectorInit.getLoggedInUser();
+    if (!loggedInUser.userInitialized) {
+      await loggedInUser.initWasteProtectorUser();
+    }
+    String ingredients = loggedInUser.foodNames.join(" ");
+    try {
+      unformattedRecipes = await supabase
+          .from('recipes')
+          .select('title')
+          .filter('cleaned_ingredients', 'contains', loggedInUser.foodNames);
+    } on PostgrestException catch (error) {
+      print(error.message);
+    } catch (error) {
+      print("oopsie poopsie ${error.toString()}");
+    }
+    print(unformattedRecipes.toString());
+    recipes = unformattedRecipes[0].toString().split(", ");
+    print(recipes.contains(ingredients[0]));
+  }
 
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
+    _getRecipes();
     return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(height / 6), child: RecipeAppBar()),
-        body: Container(color: const Color(0xFF87D68D)));
+      appBar: RecipeAppBar(),
+      body: RecipeTile(
+          recipeName: "banana",
+          recipeImage: Image.asset('assets/project_images/chef_hat_rs.png')),
+    );
   }
 }

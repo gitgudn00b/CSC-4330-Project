@@ -26,7 +26,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
           size: 30,
         ),
         color: const Color(0xFF619267),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => Navigator.pushReplacementNamed(context, '/pantry'),
         alignment: const Alignment(-1, 50));
 
     return AppBar(
