@@ -12,6 +12,11 @@ class PantryList with ChangeNotifier {
     notifyListeners();
   }
 
+  void remove(FoodItem food) {
+    _foodItems.remove(food);
+    notifyListeners();
+  }
+
   sortByExpirationDate() {
     int length = _foodItems.length;
     for (int i = 0; i < length - 1; i++) {
@@ -21,8 +26,6 @@ class PantryList with ChangeNotifier {
             _foodItems[indexWithMinExpirationDate].expirationDateAsInt) {
           indexWithMinExpirationDate = j;
         }
-        print(_foodItems[indexWithMinExpirationDate].foodName +
-            "\n+${_foodItems[indexWithMinExpirationDate].expirationDateAsInt}");
       }
       FoodItem temp = _foodItems[indexWithMinExpirationDate];
       _foodItems[indexWithMinExpirationDate] = _foodItems[i];
@@ -34,24 +37,28 @@ class PantryList with ChangeNotifier {
 }
 
 class Pantry extends StatefulWidget {
-  const Pantry({super.key, required this.pantryList});
+  Pantry({super.key, required this.pantryList});
+
+  bool _loading = true;
 
   void initPantry() async {
+    _loading = true;
     WasteProtectorUser loggedInUser = WasteProtectorInit.getLoggedInUser();
-    await loggedInUser.initWasteProtectorUser();
-
-    print("this is the food count ${loggedInUser.foodCount}");
-
-    for (int i = 0; i < loggedInUser.foodCount; i++) {
-      FoodItem foodItem = FoodItem(
-          foodName: loggedInUser.foodNames[i],
-          expirationDate: loggedInUser.expirationDates[i],
-          quantity: loggedInUser.quantities[i],
-          foodIcon: WasteProtectorUser
-              .foodIcons[i % WasteProtectorUser.foodIcons.length]);
-      pantryList.add(foodItem);
+    try {
+      await loggedInUser.initWasteProtectorUser();
+    } catch (error) {
+    } finally {
+      for (int i = 0; i < loggedInUser.foodCount; i++) {
+        FoodItem foodItem = FoodItem(
+            foodName: loggedInUser.foodNames[i],
+            expirationDate: loggedInUser.expirationDates[i],
+            quantity: loggedInUser.quantities[i],
+            foodIcon: WasteProtectorUser
+                .foodIcons[i % WasteProtectorUser.foodIcons.length]);
+        pantryList.add(foodItem);
+      }
+      pantryList.sortByExpirationDate();
     }
-    pantryList.sortByExpirationDate();
   }
 
   final PantryList pantryList;
@@ -67,6 +74,11 @@ class _PantryState extends State<Pantry> {
   void initState() {
     super.initState();
     widget.initPantry();
+    if (mounted) {
+      setState(() {
+        widget._loading = false;
+      });
+    }
   }
 
   ListenableBuilder _buildListenableBuilder(double padding) {
@@ -75,17 +87,23 @@ class _PantryState extends State<Pantry> {
         builder: (BuildContext context, Widget? child) {
           return RawScrollbar(
               thumbVisibility: true,
-              crossAxisMargin: padding / 6,
-              mainAxisMargin: padding / 6,
-              radius: Radius.circular(50),
+              crossAxisMargin: padding / 4,
+              mainAxisMargin: padding / 3,
+              radius: const Radius.circular(50),
               thickness: padding / 6,
-              thumbColor: Color(0xFF6db078),
+              thumbColor: const Color(0xFF6db078),
               child: ListView.builder(
                 padding: EdgeInsets.only(bottom: padding),
                 itemBuilder: (BuildContext context, int index) {
-                  return widget.pantryList.foodItems[index];
+                  if (index == 0) {
+                    return Padding(
+                        padding:
+                            EdgeInsets.only(left: padding, top: padding / 4),
+                        child: Text("Pantry:", style: TextStyle(fontSize: 36)));
+                  } else
+                    return widget.pantryList.foodItems[index - 1];
                 },
-                itemCount: widget.pantryList.foodItems.length,
+                itemCount: widget.pantryList.foodItems.length + 1,
               ));
         });
   }
@@ -98,7 +116,10 @@ class _PantryState extends State<Pantry> {
       backgroundColor: const Color(0xFF87D68D),
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(height / 6), child: PantryAppBar()),
-      body: _buildListenableBuilder(height / 24),
+      body: widget._loading
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFF619267)))
+          : _buildListenableBuilder(height / 24),
     );
   }
 }

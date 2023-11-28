@@ -66,7 +66,6 @@ class WasteProtectorUser {
           .select('food_count')
           .eq('id', userId);
       foodCount = getFoodCount(foodCountUnformatted[0].toString());
-      print("this is the food count $foodCount");
       if (foodCount > 0) {
         foodNamesUnformatted = await supabase
             .from('food_items')
