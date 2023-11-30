@@ -15,7 +15,7 @@ class Recipe extends StatefulWidget {
 class _RecipeState extends State<Recipe> {
   final TextEditingController _searchBarController = TextEditingController();
 
-  String typeOfSearchQuery = "";
+  String typeOfSearchQuery = "pn";
 
   List<RecipeTile> reccomendedRecipes = [];
 
@@ -40,15 +40,6 @@ class _RecipeState extends State<Recipe> {
     return recipeTiles;
   }
 
-  Future<void> setRecipeTiles() async {
-    reccomendedRecipes = await _getRecipeData();
-  }
-
-  List<RecipeTile> getReccomendedRecipes() {
-    setRecipeTiles();
-    return reccomendedRecipes;
-  }
-
   final InputDecoration _textFieldDecoration = const InputDecoration(
       focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xFF619267), width: 2.0)),
@@ -68,6 +59,7 @@ class _RecipeState extends State<Recipe> {
       padding:
           EdgeInsets.symmetric(vertical: width / 30, horizontal: width / 16),
       child: TextFormField(
+          textInputAction: TextInputAction.go,
           decoration: _textFieldDecoration.copyWith(
               prefixIcon: const Icon(Icons.search)),
           controller: _searchBarController,
@@ -108,6 +100,7 @@ class _RecipeState extends State<Recipe> {
                   onPressed: () {
                     setState(() {
                       typeOfSearchQuery = "pn";
+                      _getRecipeData();
                     });
                   },
                   height: 25,
@@ -156,7 +149,6 @@ class _RecipeState extends State<Recipe> {
   @override
   void initState() {
     _getRecipeData();
-    typeOfSearchQuery = "pn";
     super.initState();
   }
 

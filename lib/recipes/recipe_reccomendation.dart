@@ -66,6 +66,8 @@ class RecipeReccomendation {
       }
     } else {
       try {
+        ingredients.clear();
+        ingredients.add(typeOfSearchQuery);
         unformattedRecipes = await supabase
             .from('recipes')
             .select('title')
@@ -94,6 +96,10 @@ class RecipeReccomendation {
             .add(formatRecipeTitle(unformattedRecipes[i].toString()));
       }
     }
-    return formattedRecipeTitles.sublist(0, 50);
+    if (formattedRecipeTitles.length > 50) {
+      return formattedRecipeTitles.sublist(0, 50);
+    } else {
+      return formattedRecipeTitles;
+    }
   }
 }
