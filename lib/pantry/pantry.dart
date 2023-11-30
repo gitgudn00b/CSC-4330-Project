@@ -7,7 +7,23 @@ import 'package:waste_protector/user.dart';
 class PantryList with ChangeNotifier {
   final List<FoodItem> _foodItems = <FoodItem>[];
 
+  bool _loading = true;
+
   void add(FoodItem food) {
+    _foodItems.add(food);
+    notifyListeners();
+  }
+
+  void insert(FoodItem food) {
+    int index = 0;
+    while (index < _foodItems.length) {
+      if (food.expirationDateAsInt < _foodItems[index].expirationDateAsInt) {
+        _foodItems.insert(index, food);
+        notifyListeners();
+        return;
+      }
+      index++;
+    }
     _foodItems.add(food);
     notifyListeners();
   }
@@ -15,22 +31,7 @@ class PantryList with ChangeNotifier {
   void remove(FoodItem food) {
     _foodItems.remove(food);
     notifyListeners();
-  }
-
-  sortByExpirationDate() {
-    int length = _foodItems.length;
-    for (int i = 0; i < length - 1; i++) {
-      int indexWithMinExpirationDate = i;
-      for (int j = i + 1; j < length; j++) {
-        if (_foodItems[j].expirationDateAsInt <
-            _foodItems[indexWithMinExpirationDate].expirationDateAsInt) {
-          indexWithMinExpirationDate = j;
-        }
-      }
-      FoodItem temp = _foodItems[indexWithMinExpirationDate];
-      _foodItems[indexWithMinExpirationDate] = _foodItems[i];
-      _foodItems[i] = temp;
-    }
+    _loading = true;
   }
 
   List<FoodItem> get foodItems => _foodItems.toList();
@@ -38,32 +39,29 @@ class PantryList with ChangeNotifier {
 
 class Pantry extends StatefulWidget {
   Pantry({super.key, required this.pantryList});
+  final PantryList pantryList;
 
-  bool _loading = true;
+  PantryList getPantryList() => pantryList;
 
   void initPantry() async {
-    _loading = true;
+    pantryList._loading = true;
     WasteProtectorUser loggedInUser = WasteProtectorInit.getLoggedInUser();
     try {
       await loggedInUser.initWasteProtectorUser();
     } catch (error) {
+      print("oopsies");
     } finally {
       for (int i = 0; i < loggedInUser.foodCount; i++) {
         FoodItem foodItem = FoodItem(
-            foodName: loggedInUser.foodNames[i],
-            expirationDate: loggedInUser.expirationDates[i],
-            quantity: loggedInUser.quantities[i],
+            foodName: loggedInUser.foodNamesSorted[i],
+            expirationDate: loggedInUser.expirationDatesSorted[i],
+            quantity: loggedInUser.quantitiesSorted[i],
             foodIcon: WasteProtectorUser
                 .foodIcons[i % WasteProtectorUser.foodIcons.length]);
         pantryList.add(foodItem);
       }
-      pantryList.sortByExpirationDate();
     }
   }
-
-  final PantryList pantryList;
-
-  PantryList getPantryList() => pantryList;
 
   @override
   State<Pantry> createState() => _PantryState();
@@ -76,7 +74,7 @@ class _PantryState extends State<Pantry> {
     widget.initPantry();
     if (mounted) {
       setState(() {
-        widget._loading = false;
+        widget.pantryList._loading = false;
       });
     }
   }
@@ -97,11 +95,15 @@ class _PantryState extends State<Pantry> {
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
                     return Padding(
-                        padding:
-                            EdgeInsets.only(left: padding, top: padding / 4),
-                        child: Text("Pantry:", style: TextStyle(fontSize: 36)));
-                  } else
+                        padding: EdgeInsets.only(
+                            left: padding,
+                            top: padding / 4,
+                            bottom: padding / 4),
+                        child: const Text("Pantry (Sorted by Expiration Date):",
+                            style: TextStyle(fontSize: 14)));
+                  } else {
                     return widget.pantryList.foodItems[index - 1];
+                  }
                 },
                 itemCount: widget.pantryList.foodItems.length + 1,
               ));
@@ -116,7 +118,7 @@ class _PantryState extends State<Pantry> {
       backgroundColor: const Color(0xFF87D68D),
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(height / 6), child: PantryAppBar()),
-      body: widget._loading
+      body: widget.pantryList._loading
           ? const Center(
               child: CircularProgressIndicator(color: Color(0xFF619267)))
           : _buildListenableBuilder(height / 24),

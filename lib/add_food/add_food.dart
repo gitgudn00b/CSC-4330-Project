@@ -28,9 +28,9 @@ class _AddFoodState extends State<AddFood> {
     if (!loggedInUser.userInitialized) {
       await loggedInUser.initWasteProtectorUser();
     }
-    currentFoodNames = loggedInUser.foodNames;
-    currentExpirationDates = loggedInUser.expirationDates;
-    currentQuantities = loggedInUser.quantities;
+    currentFoodNames = loggedInUser.foodNamesSorted;
+    currentExpirationDates = loggedInUser.expirationDatesSorted;
+    currentQuantities = loggedInUser.quantitiesSorted;
     foodCount = loggedInUser.foodCount;
   }
 
@@ -94,11 +94,14 @@ class _AddFoodState extends State<AddFood> {
     currentQuantities.add(foodQuantity);
 
     FoodItem foodItem = FoodItem(
-      foodName: foodName,
-      expirationDate: expirationDate,
-      quantity: foodQuantity,
-      foodIcon: foodIcon,
-    );
+        foodName: foodName,
+        expirationDate: expirationDate,
+        quantity: foodQuantity,
+        foodIcon: foodIcon,
+        expirationDateAsInt:
+            (int.parse(expirationDate.substring(6, 8)) * 10000) +
+                (int.parse(expirationDate.substring(0, 2)) * 100) +
+                int.parse(expirationDate.substring(3, 5)));
     try {
       await supabase.from('food_items').update({
         'food_names': currentFoodNames,
@@ -113,7 +116,7 @@ class _AddFoodState extends State<AddFood> {
       print(error.message);
     }
 
-    AddFood.foodItems.add(foodItem);
+    AddFood.foodItems.insert(foodItem);
     foodCount += 1;
   }
 

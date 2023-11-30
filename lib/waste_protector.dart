@@ -3,11 +3,11 @@ import 'package:waste_protector/user.dart';
 import 'package:waste_protector/waste_protector_navigator.dart';
 
 class WasteProtector extends StatefulWidget {
-  WasteProtector({super.key, required this.loggedInUser});
+  const WasteProtector({super.key, required this.loggedInUser});
 
   static int currentPageIndex = 0;
 
-  WasteProtectorUser loggedInUser;
+  final WasteProtectorUser loggedInUser;
 
   static final Map<String, GlobalKey<NavigatorState>> navigatorKeys = {
     "Pantry": GlobalKey<NavigatorState>(),

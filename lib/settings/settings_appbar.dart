@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:waste_protector/add_food/add_food.dart';
+import 'package:waste_protector/pantry/pantry.dart';
 
 class SettingsAppBar extends AppBar {
   SettingsAppBar({super.key});
@@ -26,7 +28,10 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
           size: 30,
         ),
         color: const Color(0xFF619267),
-        onPressed: () => Navigator.pushReplacementNamed(context, '/pantry'),
+        onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute<Scaffold>(
+                builder: (context) => Pantry(pantryList: AddFood.foodItems))),
         alignment: const Alignment(-1, 50));
 
     return AppBar(

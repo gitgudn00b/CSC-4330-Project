@@ -10,13 +10,17 @@ class FoodItem extends StatefulWidget {
       required this.foodName,
       required this.expirationDate,
       required this.quantity,
-      required this.foodIcon});
+      required this.foodIcon,
+      this.expirationDateAsInt = 0});
 
   final String foodName;
   final String expirationDate;
   final int quantity;
   final Image foodIcon;
   int expirationDateAsInt = 0;
+  bool expiringSoon = false;
+
+  bool foodItemPressed = false;
   State<FoodItem> createState() => _FoodItemState();
 }
 
@@ -25,8 +29,6 @@ class _FoodItemState extends State<FoodItem> {
     return Text(
         "${widget.foodName}\nExpiration Date: ${widget.expirationDate}\nQuantity: ${widget.quantity}");
   }
-
-  bool foodItemPressed = false;
 
   void _deleteFoodItem() async {
     WasteProtectorUser loggedInUser = WasteProtectorInit.getLoggedInUser();
@@ -59,9 +61,9 @@ class _FoodItemState extends State<FoodItem> {
   }
 
   Widget _displayDeleteButton() {
-    if (foodItemPressed) {
+    if (widget.foodItemPressed) {
       return IconButton(
-          padding: EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 25),
           onPressed: () {
             setState(() {
               _deleteFoodItem();
@@ -69,7 +71,7 @@ class _FoodItemState extends State<FoodItem> {
           },
           icon: const Icon(Icons.delete_sharp, color: Color(0xff619267)));
     }
-    return const Text("");
+    return const Text("       ");
   }
 
   Text _expirationDateStatus() {
@@ -80,7 +82,10 @@ class _FoodItemState extends State<FoodItem> {
     if ((widget.expirationDateAsInt - currentDate) <= 0) {
       return const Text("(EX)", style: TextStyle(color: Colors.red));
     }
-    if ((widget.expirationDateAsInt - currentDate) <= 3) {
+    if ((widget.expirationDateAsInt - currentDate) <= 3 ||
+        (widget.expirationDateAsInt - currentDate) <= 72 &&
+            (widget.expirationDateAsInt - currentDate) >= 70) {
+      widget.expiringSoon = true;
       return const Text("  (!!!)", style: TextStyle(color: Colors.red));
     }
     return Text("      ");
@@ -89,20 +94,17 @@ class _FoodItemState extends State<FoodItem> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
-    int month = int.parse(widget.expirationDate.substring(0, 2));
-    int day = int.parse(widget.expirationDate.substring(3, 5));
-    int year = int.parse(widget.expirationDate.substring(6, 8));
-
-    widget.expirationDateAsInt = (year * 10000) + (month * 100) + day;
-
+    widget.expirationDateAsInt =
+        (int.parse(widget.expirationDate.substring(6, 8)) * 10000) +
+            (int.parse(widget.expirationDate.substring(0, 2)) * 100) +
+            int.parse(widget.expirationDate.substring(3, 5));
     return MaterialButton(
         onPressed: () {
           setState(() {
-            if (!foodItemPressed) {
-              foodItemPressed = true;
+            if (!widget.foodItemPressed) {
+              widget.foodItemPressed = true;
             } else {
-              foodItemPressed = false;
+              widget.foodItemPressed = false;
             }
           });
         },
@@ -110,7 +112,7 @@ class _FoodItemState extends State<FoodItem> {
             width: width * 0.9,
             height: height / 13,
             margin: EdgeInsets.only(
-                top: height / 24, right: width / 8, left: width / 60),
+                bottom: height / 24, right: width / 8, left: width / 60),
             decoration: BoxDecoration(
                 color: const Color(0xFFF7FFF6),
                 border: Border.all(color: const Color(0xFF353535), width: 2.0),
@@ -120,12 +122,18 @@ class _FoodItemState extends State<FoodItem> {
               //crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Padding(
-                    padding: const EdgeInsets.only(top: 1.5, right: 8),
-                    child: widget.foodIcon),
-                _formatText(),
-                _expirationDateStatus(),
-                _displayDeleteButton()
+                FittedBox(
+                    fit: BoxFit.cover,
+                    child: Padding(
+                        padding: const EdgeInsets.only(top: 1.5, right: 8),
+                        child: widget.foodIcon)),
+                FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Row(children: [
+                      _formatText(),
+                      _expirationDateStatus(),
+                      _displayDeleteButton()
+                    ]))
               ],
             )));
   }
