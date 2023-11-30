@@ -93,9 +93,9 @@ class _RecipePageState extends State<RecipePage> {
     Text ingredientsText = Text(
       formattedIngredients,
       style: const TextStyle(
-          fontSize: 14,
-          textBaseline: TextBaseline.ideographic,
-          color: Color(0xFFF7FFF6)),
+        fontSize: 14,
+        textBaseline: TextBaseline.ideographic,
+      ),
     );
     Text recipeText = Text(
       formattedRecipe,
